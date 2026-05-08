@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Emotion Detector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="background-shell" aria-hidden="true">
+        <div class="blob blob-one"></div>
+        <div class="blob blob-two"></div>
+        <div class="blob blob-three"></div>
+        <div class="grid-glow"></div>
+        <div id="particles"></div>
+    </div>
+
+    <main class="page">
+        <section class="hero-panel glass-card">
+            <div class="hero-copy">
+                <span class="eyebrow">Semantic Emotion Intelligence</span>
+                <h1 class="typing-headline">
+                    <span id="typingText"></span>
+                    <span class="cursor">|</span>
+                </h1>
+                <p class="hero-text">
+                    Analyze short text, long paragraphs, reviews, messages, and real-world writing
+                    with a stronger NLP pipeline built for fast emotion detection.
+                </p>
+
+                <div class="emotion-pills">
+                    {% for emotion, data in emotions.items() %}
+                    <span class="pill" style="--pill-color: {{ data.color }}">
+                        {{ data.emoji }} {{ emotion.title() }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="hero-badge glass-card">
+                <span class="badge-label">Model Status</span>
+                <strong>{{ "Ready for trained inference" if model_source == "trained-artifacts" else "Legacy fallback loaded" }}</strong>
+                <small id="modelSource">Source: {{ model_source.replace("-", " ").title() }}</small>
+            </div>
+        </section>
+
+        <section class="workspace">
+            <div class="analyzer glass-card">
+                <div class="card-heading">
+                    <div>
+                        <p class="section-kicker">Input Text</p>
+                        <h2>Analyze emotion instantly</h2>
+                    </div>
+                    <div class="counter-wrap">
+                        <span id="charCounter">0</span>
+                        <small>characters</small>
+                    </div>
+                </div>
+
+                <form id="emotionForm">
+                    <label for="textInput" class="sr-only">Enter text for emotion analysis</label>
+                    <textarea
+                        id="textInput"
+                        name="text"
+                        rows="8"
+                        maxlength="4000"
+                        placeholder="Type or paste a sentence, paragraph, review, diary note, or real-world text here..."
+                    ></textarea>
+
+                    <div class="action-row">
+                        <button type="submit" id="analyzeBtn" class="glow-button">
+                            <span class="button-text">Analyze Emotion</span>
+                            <span class="button-loader hidden"></span>
+                        </button>
+                        <button type="button" id="clearBtn" class="secondary-button">Clear</button>
+                    </div>
+                </form>
+
+                <div id="errorBox" class="message-box error hidden"></div>
+            </div>
+
+            <aside class="history-panel glass-card">
+                <div class="card-heading compact">
+                    <div>
+                        <p class="section-kicker">Session Memory</p>
+                        <h2>Emotion history</h2>
+                    </div>
+                </div>
+                <div id="historyList" class="history-list">
+                    <div class="history-empty">No predictions yet. Your recent analyses will appear here.</div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="result-section glass-card" id="resultSection">
+            <div class="result-header">
+                <div>
+                    <p class="section-kicker">Prediction Result</p>
+                    <h2>Detected emotion</h2>
+                </div>
+                <button type="button" id="copyBtn" class="copy-button">Copy Result</button>
+            </div>
+
+            <div id="resultCard" class="result-card">
+                <div class="result-placeholder">
+                    <div class="placeholder-orb"></div>
+                    <p>Your prediction card will appear here after analysis.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        window.EMOTION_META = {{ emotions|tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
